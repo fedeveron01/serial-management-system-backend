@@ -14,8 +14,8 @@ exports.getSerials = async (req, res) => {
 exports.createSerial = async (req, res) => {
   try {
     const { quantity, durationDays} = req.body;
-    if (quantity < 1 || quantity > 100) {
-      return res.status(400).json({ error: 'Quantity must be between 1 and 100' });
+    if (quantity < 1 || quantity > 10) {
+      return res.status(400).json({ error: 'Quantity must be between 1 and 10' });
     }
     if (durationDays < 1 || durationDays > 730) {
         return res.status(400).json({ error: 'Duration must be between 1 and 365' });

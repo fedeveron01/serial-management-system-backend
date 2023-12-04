@@ -77,10 +77,12 @@ exports.updateSerial = async (req, res) => {
 exports.deleteSerial = async (req, res) => {
     try {
         const { code } = req.params;
-        const deleteSerial = await Serial.deleteOne({ code });
-        if (deleteSerial.deletedCount == 0) {
+        console.log(code);
+        serial = await Serial.findOne({ code });
+        if (!serial) {
             return res.status(404).json({ error: 'Serial not found' });
         }
+        await Serial.findOneAndDelete({ code });
         return res.status(200).json({ mensaje: 'Serial deleted' });
     
     }
@@ -94,14 +96,17 @@ exports.activateSerial = async (req, res) => {
     try {
         const { code } = req.params;
         used = true;
-        usedDate = new Date(Time.now());
+        usedDate = new Date(Date.now());
         
         serial = await Serial.findOne({ code });
+        if (!serial) {
+            return res.status(404).json({ error: 'Serial not found' });
+        }
         if (serial.used) {
             return res.status(400).json({ error: 'Serial already used' });
         }
         
-        expirationDate = new Date(Time.now() + durationDays * 24 * 60 * 60 * 1000);
+        expirationDate = new Date(Date.now() + serial.durationDays * 24 * 60 * 60 * 1000);
 
         const updatedSerial = await Serial.findOneAndUpdate(
             { code },
